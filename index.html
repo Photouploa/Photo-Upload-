@@ -5,24 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Upload</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-black">
-  <!-- Upload Form -->
   <main class="p-4 max-w-3xl mx-auto mt-24">
     <form id="uploadForm" class="bg-gray-800 p-4 rounded-lg shadow-md space-y-4">
       <label for="photo" class="block text-white text-xl font-semibold">Select Photo to Upload:</label>
       <input type="file" id="photo" name="photo" class="block w-full text-sm text-gray-400 bg-gray-700 border border-gray-600 rounded-md file:py-2 file:px-4 file:border-0 file:bg-green-600 file:text-white cursor-pointer" accept="image/*" required />
-      
-      <button type="submit" id="uploadBtn" class="w-full py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700">
-        Upload Photo
-      </button>
+      <button type="submit" id="uploadBtn" class="w-full py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700">Upload Photo</button>
     </form>
   </main>
 
@@ -30,7 +24,6 @@
     import { initializeApp } from "firebase/app";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
     import { getFirestore, collection, addDoc } from "firebase/firestore";
-    import { getAnalytics } from "firebase/analytics";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
@@ -43,18 +36,16 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const storage = getStorage(app);
     const db = getFirestore(app);
 
     const uploadForm = document.getElementById("uploadForm");
-    const uploadBtn = document.getElementById("uploadBtn");
     const photoInput = document.getElementById("photo");
 
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const file = photoInput.files[0];
+
       if (file) {
         const storageRef = ref(storage, 'photos/' + file.name);
         try {
@@ -67,7 +58,7 @@
             createdAt: new Date(),
           });
 
-          Swal.fire('Success', 'Photo uploaded and saved to database successfully!', 'success');
+          Swal.fire('Success', 'Photo uploaded successfully!', 'success');
         } catch (error) {
           console.error("Error uploading photo: ", error);
           Swal.fire('Error', 'Failed to upload photo: ' + error.message, 'error');
