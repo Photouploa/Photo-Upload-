@@ -15,13 +15,9 @@
 <body class="bg-black">
 
   <!-- Header -->
-  <header
-    class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
-    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
-      style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
-
-    <div style="height: 29px;"
-      class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
+  <header class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
+    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
+    <div style="height: 29px;" class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
       <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
         <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
       </div>
@@ -33,7 +29,6 @@
   </header>
   
   <main class="p-4 max-w-3xl mx-auto mt-24">
-    
     <!-- Upload Form -->
     <form id="uploadForm" class="bg-gray-800 p-4 rounded-lg shadow-md space-y-4">
       <label for="photo" class="block text-white text-xl font-semibold">Select Photo to Upload:</label>
@@ -43,9 +38,8 @@
         Upload Photo
       </button>
     </form>
-    
   </main>
-  
+
   <script type="module">
     import { initializeApp } from "firebase/app";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -76,7 +70,7 @@
 
       const file = photoInput.files[0];
       if (file) {
-        const storageRef = ref(storage, `photos/${file.name}`);
+        const storageRef = ref(storage, 'photos/' + file.name);
         try {
           // Upload the photo to Firebase Storage
           const uploadTask = await uploadBytes(storageRef, file);
@@ -86,7 +80,7 @@
           await addDoc(collection(db, "photos"), {
             name: file.name,
             url: downloadURL,
-            createdAt: new Date()
+            createdAt: new Date(),
           });
 
           // Show success alert
