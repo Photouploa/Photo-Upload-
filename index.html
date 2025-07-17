@@ -19,17 +19,6 @@
     class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
     <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
       style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
-
-    <div style="height: 29px;"
-      class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
-      <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
-        <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
-      </div>
-      <p id="mainBalance" class="text-sm font-bold text-yellow-300">0.00</p>
-      <button class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center shadow-md">
-        <i class="fa-solid fa-plus text-gray-100 text-sm"></i>
-      </button>
-    </div>
   </header>
   
   <main class="p-4 max-w-3xl mx-auto pt-24">
@@ -75,7 +64,7 @@
           uploadStatus.innerHTML = "Upload successful!";
           const fileUrl = snapshot.metadata.fullPath;
 
-          // Save file metadata to Firestore (optional)
+          // Optionally save file metadata to Firestore (if needed)
           await setDoc(doc(db, "photos", file.name), {
             fileName: file.name,
             fileUrl: fileUrl,
