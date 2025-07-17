@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,28 +7,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 
 <body class="bg-black">
-
-  <!-- Header -->
-  <header class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
-    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
-    <div style="height: 29px;" class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
-      <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
-        <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
-      </div>
-      <p id="mainBalance" class="text-sm font-bold text-yellow-300">0.00</p>
-      <button class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center shadow-md">
-        <i class="fa-solid fa-plus text-gray-100 text-sm"></i>
-      </button>
-    </div>
-  </header>
-  
+  <!-- Upload Form -->
   <main class="p-4 max-w-3xl mx-auto mt-24">
-    <!-- Upload Form -->
     <form id="uploadForm" class="bg-gray-800 p-4 rounded-lg shadow-md space-y-4">
       <label for="photo" class="block text-white text-xl font-semibold">Select Photo to Upload:</label>
       <input type="file" id="photo" name="photo" class="block w-full text-sm text-gray-400 bg-gray-700 border border-gray-600 rounded-md file:py-2 file:px-4 file:border-0 file:bg-green-600 file:text-white cursor-pointer" accept="image/*" required />
@@ -72,26 +58,22 @@
       if (file) {
         const storageRef = ref(storage, 'photos/' + file.name);
         try {
-          // Upload the photo to Firebase Storage
           const uploadTask = await uploadBytes(storageRef, file);
           const downloadURL = await getDownloadURL(uploadTask.ref);
 
-          // Save metadata (like download URL) to Firestore
           await addDoc(collection(db, "photos"), {
             name: file.name,
             url: downloadURL,
             createdAt: new Date(),
           });
 
-          // Show success alert
           Swal.fire('Success', 'Photo uploaded and saved to database successfully!', 'success');
         } catch (error) {
-          // Show error alert
-          Swal.fire('Error', 'Failed to upload photo', 'error');
+          console.error("Error uploading photo: ", error);
+          Swal.fire('Error', 'Failed to upload photo: ' + error.message, 'error');
         }
       }
     });
   </script>
-
 </body>
 </html>
