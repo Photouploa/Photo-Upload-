@@ -90,7 +90,7 @@
         const snapshot = await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref());
 
-        // Save the photo URL in Firestore
+        // Auto-save the photo document in Firestore
         const docRef = await addDoc(collection(db, "photos"), {
           url: downloadURL,
           name: file.name,
@@ -98,7 +98,7 @@
         });
 
         // Success Message
-        Swal.fire("Success", "Photo uploaded successfully", "success");
+        Swal.fire("Success", "Photo uploaded and saved to Firestore successfully", "success");
 
         // Show the image URL in the status section
         statusDiv.innerHTML = `Uploaded Successfully: <a href="${downloadURL}" target="_blank" class="text-yellow-400">${downloadURL}</a>`;
