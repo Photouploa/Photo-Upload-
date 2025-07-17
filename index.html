@@ -48,7 +48,8 @@
   
   <script type="module">
     import { initializeApp } from "firebase/app";
-    import { getStorage, ref, uploadBytes } from "firebase/storage";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    import { getFirestore, collection, addDoc } from "firebase/firestore";
     import { getAnalytics } from "firebase/analytics";
 
     const firebaseConfig = {
@@ -64,6 +65,7 @@
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const storage = getStorage(app);
+    const db = getFirestore(app);
 
     const uploadForm = document.getElementById("uploadForm");
     const uploadBtn = document.getElementById("uploadBtn");
@@ -76,9 +78,21 @@
       if (file) {
         const storageRef = ref(storage, `photos/${file.name}`);
         try {
-          await uploadBytes(storageRef, file);
-          Swal.fire('Success', 'Photo uploaded successfully!', 'success');
+          // Upload the photo to Firebase Storage
+          const uploadTask = await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(uploadTask.ref);
+
+          // Save metadata (like download URL) to Firestore
+          await addDoc(collection(db, "photos"), {
+            name: file.name,
+            url: downloadURL,
+            createdAt: new Date()
+          });
+
+          // Show success alert
+          Swal.fire('Success', 'Photo uploaded and saved to database successfully!', 'success');
         } catch (error) {
+          // Show error alert
           Swal.fire('Error', 'Failed to upload photo', 'error');
         }
       }
