@@ -13,6 +13,7 @@
   
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 
@@ -82,6 +83,7 @@
 
     // Initialize Firebase
     const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
     // Handle form submission
@@ -93,12 +95,15 @@
       const password = document.getElementById("password").value;
 
       try {
-        // Save user to Firestore
-        const userRef = db.collection("users").doc();
+        // Create user with Firebase Authentication
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Save additional user data to Firestore
+        const userRef = db.collection("users").doc(user.uid);
         await userRef.set({
           fullName: fullName,
           email: email,
-          password: password, // In real applications, hash this password
         });
 
         // Show success message
