@@ -4,24 +4,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Photo Upload</title>
+  <title>Signup</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 
 <body class="bg-black">
 
   <!-- Header -->
-  <header
-    class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
+  <header class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
     <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
-      style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
-
-    <div style="height: 29px;"
-      class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
+      style="font-family: 'Audiowide', cursive;">BanglaTop</h2>
+    <div style="height: 29px;" class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
       <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
         <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
       </div>
@@ -31,27 +32,44 @@
       </button>
     </div>
   </header>
-  
-  <main class="p-4 max-w-3xl mx-auto mt-32">
-    <!-- Notice Input Form -->
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h3 class="text-xl font-bold text-white mb-4">Add New Notice</h3>
-      <form id="noticeForm">
-        <label for="noticeText" class="text-white mb-2 block">Notice:</label>
-        <textarea id="noticeText" rows="4" class="w-full p-3 mb-4 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Enter notice here..."></textarea>
-        
-        <button type="submit" class="w-full bg-yellow-400 py-2 text-black font-bold rounded-lg hover:bg-yellow-500 transition">
-          Submit Notice
-        </button>
+
+  <!-- Main Content -->
+  <main class="p-4 max-w-3xl mx-auto mt-16">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">Create an Account</h2>
+      <form id="signup-form" class="space-y-4">
+        <!-- Full Name -->
+        <div>
+          <label for="full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+          <input type="text" id="full-name" name="full-name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300" placeholder="Enter your full name" />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+          <input type="email" id="email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300" placeholder="Enter your email" />
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input type="password" id="password" name="password" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300" placeholder="Enter your password" />
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="w-full bg-yellow-400 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-300">Sign Up</button>
+        </div>
+
+        <div class="text-center mt-4">
+          <p class="text-sm text-gray-500">Already have an account? <a href="#" class="text-yellow-400 hover:underline">Login</a></p>
+        </div>
       </form>
     </div>
   </main>
-  
-  <script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAnalytics } from "firebase/analytics";
-    import { getFirestore, collection, addDoc } from "firebase/firestore"; 
 
+  <script type="module">
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
       authDomain: "dlstournament-31ac1.firebaseapp.com",
@@ -62,51 +80,48 @@
       measurementId: "G-0DGFJEV6GL"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
     // Handle form submission
-    const form = document.getElementById('noticeForm');
-    form.addEventListener('submit', async (e) => {
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      
-      const noticeText = document.getElementById('noticeText').value;
 
-      if (noticeText.trim() === "") {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Please enter a notice!',
-        });
-        return;
-      }
+      const fullName = document.getElementById("full-name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
       try {
-        // Save the notice to Firestore
-        const docRef = await addDoc(collection(db, "notices"), {
-          notice: noticeText,
-          timestamp: new Date()
+        // Save user to Firestore
+        const userRef = db.collection("users").doc();
+        await userRef.set({
+          fullName: fullName,
+          email: email,
+          password: password, // In real applications, hash this password
         });
 
+        // Show success message
         Swal.fire({
-          icon: 'success',
-          title: 'Notice Submitted',
-          text: 'Your notice has been saved successfully!',
+          title: "Success!",
+          text: "Account created successfully!",
+          icon: "success",
+          confirmButtonText: "Okay",
         });
 
-        // Clear the input field
-        document.getElementById('noticeText').value = '';
+        // Reset the form
+        document.getElementById("signup-form").reset();
       } catch (error) {
+        // Show error message
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'There was an error saving your notice!',
+          title: "Error!",
+          text: error.message,
+          icon: "error",
+          confirmButtonText: "Okay",
         });
       }
     });
   </script>
-
 </body>
 
 </html>
