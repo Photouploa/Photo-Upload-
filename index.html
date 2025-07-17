@@ -103,7 +103,9 @@
         // Show the image URL in the status section
         statusDiv.innerHTML = `Uploaded Successfully: <a href="${downloadURL}" target="_blank" class="text-yellow-400">${downloadURL}</a>`;
       } catch (error) {
-        Swal.fire("Error", "Failed to upload photo", "error");
+        // Display detailed error message
+        console.error("Upload failed:", error);
+        Swal.fire("Error", "Failed to upload photo. " + error.message, "error");
       }
     });
   </script>
