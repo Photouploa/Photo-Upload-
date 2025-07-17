@@ -4,73 +4,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Signup</title>
+  <title>Sign Up</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-black">
-
+  
   <!-- Header -->
   <header class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
-    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
-      style="font-family: 'Audiowide', cursive;">BanglaTop</h2>
-    <div style="height: 29px;" class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
-      <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
-        <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
-      </div>
-      <p id="mainBalance" class="text-sm font-bold text-yellow-300">0.00</p>
-      <button class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center shadow-md">
-        <i class="fa-solid fa-plus text-gray-100 text-sm"></i>
-      </button>
-    </div>
+    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">BanglaTop</h2>
   </header>
-
+  
   <!-- Main Content -->
   <main class="p-4 max-w-3xl mx-auto mt-16">
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-      <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">Create an Account</h2>
-      <form id="signup-form" class="space-y-4">
-        <!-- Full Name -->
-        <div>
-          <label for="full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
-          <input type="text" id="full-name" name="full-name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300" placeholder="Enter your full name" />
-        </div>
-
-        <!-- Email -->
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-          <input type="email" id="email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300" placeholder="Enter your email" />
-        </div>
-
-        <!-- Password -->
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-          <input type="password" id="password" name="password" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300" placeholder="Enter your password" />
-        </div>
-
-        <!-- Submit Button -->
-        <div class="text-center">
-          <button type="submit" class="w-full bg-yellow-400 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-300">Sign Up</button>
-        </div>
-
-        <div class="text-center mt-4">
-          <p class="text-sm text-gray-500">Already have an account? <a href="#" class="text-yellow-400 hover:underline">Login</a></p>
-        </div>
-      </form>
-    </div>
+    <form id="signup-form" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h3 class="text-2xl text-white font-semibold">Sign Up</h3>
+      
+      <div>
+        <label for="email" class="text-white">Email</label>
+        <input type="email" id="email" class="w-full p-2 bg-gray-700 text-white rounded-md" required />
+      </div>
+      
+      <div>
+        <label for="password" class="text-white">Password</label>
+        <input type="password" id="password" class="w-full p-2 bg-gray-700 text-white rounded-md" required />
+      </div>
+      
+      <div>
+        <label for="username" class="text-white">Username</label>
+        <input type="text" id="username" class="w-full p-2 bg-gray-700 text-white rounded-md" required />
+      </div>
+      
+      <button type="submit" class="w-full bg-blue-500 py-2 text-white rounded-md">Sign Up</button>
+    </form>
   </main>
-
+  
   <script type="module">
-    // Firebase configuration
+    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
       authDomain: "dlstournament-31ac1.firebaseapp.com",
@@ -82,51 +65,48 @@
     };
 
     // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    import { initializeApp } from "firebase/app";
+    import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+    import { getFirestore, doc, setDoc } from "firebase/firestore"; 
 
-    // Handle form submission
-    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore(app);
+
+    // Handle Sign Up
+    const signupForm = document.getElementById('signup-form');
+    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const fullName = document.getElementById("full-name").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const username = document.getElementById('username').value;
+      
       try {
-        // Create user with Firebase Authentication
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        // Create user with email and password
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-
-        // Save additional user data to Firestore
-        const userRef = db.collection("users").doc(user.uid);
-        await userRef.set({
-          fullName: fullName,
+        
+        // Save user data to Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          username: username,
           email: email,
+          createdAt: new Date(),
         });
 
-        // Show success message
-        Swal.fire({
-          title: "Success!",
-          text: "Account created successfully!",
-          icon: "success",
-          confirmButtonText: "Okay",
-        });
-
-        // Reset the form
-        document.getElementById("signup-form").reset();
+        // Success Message
+        Swal.fire('Success!', 'You have successfully signed up!', 'success');
+        
+        // Optionally, redirect to dashboard or home page
+        // window.location.href = '/dashboard.html';
+        
       } catch (error) {
-        // Show error message
-        Swal.fire({
-          title: "Error!",
-          text: error.message,
-          icon: "error",
-          confirmButtonText: "Okay",
-        });
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        Swal.fire('Error', errorMessage, 'error');
       }
     });
   </script>
+  
 </body>
-
 </html>
