@@ -6,54 +6,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Upload</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-
-<body class="bg-black">
-
-  <!-- Header -->
-  <header
-    class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
-    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
-      style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
-  </header>
-  
-  <main class="p-4 max-w-3xl mx-auto pt-24">
-    <h3 class="text-xl text-white mb-6">Upload Your Photo</h3>
-    <input type="file" id="fileInput" class="bg-gray-700 text-white p-2 rounded-lg" />
-    <button id="uploadBtn" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">Upload Photo</button>
-    <div id="uploadStatus" class="text-white mt-4"></div>
-  </main>
-  
+  <!-- Firebase SDK -->
   <script type="module">
     // Firebase SDK imports
-    import { initializeApp } from "firebase/app";
-    import { getAnalytics } from "firebase/analytics";
-    import { getStorage, ref, uploadBytes } from "firebase/storage";
-    import { getFirestore, doc, setDoc } from "firebase/firestore"; 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
       authDomain: "dlstournament-31ac1.firebaseapp.com",
       projectId: "dlstournament-31ac1",
-      storageBucket: "dlstournament-31ac1.firebasestorage.app",
+      storageBucket: "dlstournament-31ac1.appspot.com",
       messagingSenderId: "874377019055",
       appId: "1:874377019055:web:6e38db2ec7f0d541d2de5a",
       measurementId: "G-0DGFJEV6GL"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const storage = getStorage(app);
     const db = getFirestore(app);
 
+    // DOM Elements
     const uploadBtn = document.getElementById("uploadBtn");
     const fileInput = document.getElementById("fileInput");
     const uploadStatus = document.getElementById("uploadStatus");
 
+    // Upload button click event listener
     uploadBtn.addEventListener("click", async () => {
       const file = fileInput.files[0];
       if (file) {
@@ -64,7 +48,7 @@
           uploadStatus.innerHTML = "Upload successful!";
           const fileUrl = snapshot.metadata.fullPath;
 
-          // Optionally save file metadata to Firestore (if needed)
+          // Save file metadata to Firestore
           await setDoc(doc(db, "photos", file.name), {
             fileName: file.name,
             fileUrl: fileUrl,
@@ -98,6 +82,23 @@
       }
     });
   </script>
+</head>
+
+<body class="bg-black">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
+    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
+  </header>
+
+  <!-- Main Content -->
+  <main class="p-4 max-w-3xl mx-auto pt-24">
+    <h3 class="text-xl text-white mb-6">Upload Your Photo</h3>
+    <input type="file" id="fileInput" class="bg-gray-700 text-white p-2 rounded-lg" />
+    <button id="uploadBtn" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">Upload Photo</button>
+    <div id="uploadStatus" class="text-white mt-4"></div>
+  </main>
 
 </body>
+
 </html>
