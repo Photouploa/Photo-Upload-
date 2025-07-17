@@ -6,99 +6,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Upload</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <!-- Firebase SDK -->
-  <script type="module">
-    // Firebase SDK imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
-      authDomain: "dlstournament-31ac1.firebaseapp.com",
-      projectId: "dlstournament-31ac1",
-      storageBucket: "dlstournament-31ac1.appspot.com",
-      messagingSenderId: "874377019055",
-      appId: "1:874377019055:web:6e38db2ec7f0d541d2de5a",
-      measurementId: "G-0DGFJEV6GL"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const storage = getStorage(app);
-    const db = getFirestore(app);
-
-    // DOM Elements
-    const uploadBtn = document.getElementById("uploadBtn");
-    const fileInput = document.getElementById("fileInput");
-    const uploadStatus = document.getElementById("uploadStatus");
-
-    // Upload button click event listener
-    uploadBtn.addEventListener("click", async () => {
-      const file = fileInput.files[0];
-      if (file) {
-        const storageRef = ref(storage, 'uploads/' + file.name);
-        try {
-          uploadStatus.innerHTML = "Uploading...";
-          const snapshot = await uploadBytes(storageRef, file);
-          uploadStatus.innerHTML = "Upload successful!";
-          const fileUrl = snapshot.metadata.fullPath;
-
-          // Save file metadata to Firestore
-          await setDoc(doc(db, "photos", file.name), {
-            fileName: file.name,
-            fileUrl: fileUrl,
-            uploadDate: new Date(),
-          });
-
-          // Show success message
-          Swal.fire({
-            title: 'Success!',
-            text: 'Your photo has been uploaded successfully!',
-            icon: 'success',
-            confirmButtonText: 'OK'
-          });
-
-        } catch (error) {
-          uploadStatus.innerHTML = "Upload failed.";
-          Swal.fire({
-            title: 'Error!',
-            text: 'There was an error uploading your photo. Please try again.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-          });
-        }
-      } else {
-        Swal.fire({
-          title: 'Warning!',
-          text: 'Please select a photo to upload.',
-          icon: 'warning',
-          confirmButtonText: 'OK'
-        });
-      }
-    });
-  </script>
 </head>
 
 <body class="bg-black">
 
   <!-- Header -->
-  <header class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
-    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
-  </header>
+  <header
+    class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
+    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
+      style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
 
-  <!-- Main Content -->
-  <main class="p-4 max-w-3xl mx-auto pt-24">
-    <h3 class="text-xl text-white mb-6">Upload Your Photo</h3>
-    <input type="file" id="fileInput" class="bg-gray-700 text-white p-2 rounded-lg" />
-    <button id="uploadBtn" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">Upload Photo</button>
-    <div id="uploadStatus" class="text-white mt-4"></div>
+    <div style="height: 29px;"
+      class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
+      <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
+        <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
+      </div>
+      <p id="mainBalance" class="text-sm font-bold text-yellow-300">0.00</p>
+      <button class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center shadow-md">
+        <i class="fa-solid fa-plus text-gray-100 text-sm"></i>
+      </button>
+    </div>
+  </header>
+  
+  <main class="p-4 max-w-3xl mx-auto mt-24">
+    
+    <!-- Upload Form -->
+    <form id="uploadForm" class="bg-gray-800 p-4 rounded-lg shadow-md space-y-4">
+      <label for="photo" class="block text-white text-xl font-semibold">Select Photo to Upload:</label>
+      <input type="file" id="photo" name="photo" class="block w-full text-sm text-gray-400 bg-gray-700 border border-gray-600 rounded-md file:py-2 file:px-4 file:border-0 file:bg-green-600 file:text-white cursor-pointer" accept="image/*" required />
+      
+      <button type="submit" id="uploadBtn" class="w-full py-2 bg-blue-600 text-white rounded-lg mt-4 hover:bg-blue-700">
+        Upload Photo
+      </button>
+    </form>
+    
   </main>
+  
+  <script type="module">
+    import { initializeApp } from "firebase/app";
+    import { getStorage, ref, uploadBytes } from "firebase/storage";
+    import { getAnalytics } from "firebase/analytics";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
+      authDomain: "dlstournament-31ac1.firebaseapp.com",
+      projectId: "dlstournament-31ac1",
+      storageBucket: "dlstournament-31ac1.firebasestorage.app",
+      messagingSenderId: "874377019055",
+      appId: "1:874377019055:web:6e38db2ec7f0d541d2de5a",
+      measurementId: "G-0DGFJEV6GL"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const storage = getStorage(app);
+
+    const uploadForm = document.getElementById("uploadForm");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const photoInput = document.getElementById("photo");
+
+    uploadForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const file = photoInput.files[0];
+      if (file) {
+        const storageRef = ref(storage, `photos/${file.name}`);
+        try {
+          await uploadBytes(storageRef, file);
+          Swal.fire('Success', 'Photo uploaded successfully!', 'success');
+        } catch (error) {
+          Swal.fire('Error', 'Failed to upload photo', 'error');
+        }
+      }
+    });
+  </script>
 
 </body>
-
 </html>
