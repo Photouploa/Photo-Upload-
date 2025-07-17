@@ -15,37 +15,37 @@
 <body class="bg-black">
 
   <!-- Header -->
-  <header class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-4 px-6 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl fixed top-0 left-0 right-0 z-50">
+  <header
+    class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
     <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
       style="font-family: 'Audiowide', cursive;">Photo Upload</h2>
-  </header>
 
-  <!-- Main Content -->
-  <main class="p-4 max-w-3xl mx-auto pt-28">
-    <!-- Photo Upload Form -->
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-full">
-      <h3 class="text-xl font-bold text-white mb-4">Upload Your Photo</h3>
-
-      <!-- File input -->
-      <input type="file" id="photoInput" class="mb-4 p-2 border-2 border-gray-500 rounded-md bg-gray-700 text-white w-full" />
-
-      <!-- Submit Button -->
-      <button id="uploadBtn" class="w-full py-2 bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 text-white font-bold rounded-lg">
-        Upload Photo
+    <div style="height: 29px;"
+      class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
+      <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
+        <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
+      </div>
+      <p id="mainBalance" class="text-sm font-bold text-yellow-300">0.00</p>
+      <button class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center shadow-md">
+        <i class="fa-solid fa-plus text-gray-100 text-sm"></i>
       </button>
-
-      <div id="status" class="mt-4 text-center text-yellow-300"></div>
     </div>
+  </header>
+  
+  <main class="p-4 max-w-3xl mx-auto pt-24">
+    <h3 class="text-xl text-white mb-6">Upload Your Photo</h3>
+    <input type="file" id="fileInput" class="bg-gray-700 text-white p-2 rounded-lg" />
+    <button id="uploadBtn" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">Upload Photo</button>
+    <div id="uploadStatus" class="text-white mt-4"></div>
   </main>
-
-  <!-- Firebase Setup Script -->
+  
   <script type="module">
+    // Firebase SDK imports
     import { initializeApp } from "firebase/app";
     import { getAnalytics } from "firebase/analytics";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-    import { getFirestore, collection, addDoc } from "firebase/firestore";
+    import { getStorage, ref, uploadBytes } from "firebase/storage";
+    import { getFirestore, doc, setDoc } from "firebase/firestore"; 
 
-    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
       authDomain: "dlstournament-31ac1.firebaseapp.com",
@@ -61,47 +61,54 @@
     const storage = getStorage(app);
     const db = getFirestore(app);
 
-    // Photo Upload Function
-    const uploadBtn = document.getElementById('uploadBtn');
-    const photoInput = document.getElementById('photoInput');
-    const statusDiv = document.getElementById('status');
+    const uploadBtn = document.getElementById("uploadBtn");
+    const fileInput = document.getElementById("fileInput");
+    const uploadStatus = document.getElementById("uploadStatus");
 
-    uploadBtn.addEventListener('click', async () => {
-      const file = photoInput.files[0];
-      if (!file) {
-        Swal.fire("Error", "Please select a photo to upload", "error");
-        return;
-      }
+    uploadBtn.addEventListener("click", async () => {
+      const file = fileInput.files[0];
+      if (file) {
+        const storageRef = ref(storage, 'uploads/' + file.name);
+        try {
+          uploadStatus.innerHTML = "Uploading...";
+          const snapshot = await uploadBytes(storageRef, file);
+          uploadStatus.innerHTML = "Upload successful!";
+          const fileUrl = snapshot.metadata.fullPath;
 
-      const storageRef = ref(storage, 'photos/' + file.name);
-      try {
-        console.log("Uploading photo...");
-        const snapshot = await uploadBytes(storageRef, file);
-        console.log("Upload success:", snapshot);
-        
-        const downloadURL = await getDownloadURL(snapshot.ref());
-        console.log("Download URL:", downloadURL);
+          // Save file metadata to Firestore (optional)
+          await setDoc(doc(db, "photos", file.name), {
+            fileName: file.name,
+            fileUrl: fileUrl,
+            uploadDate: new Date(),
+          });
 
-        // Auto-save the photo document in Firestore
-        const docRef = await addDoc(collection(db, "photos"), {
-          url: downloadURL,
-          name: file.name,
-          createdAt: new Date()
+          // Show success message
+          Swal.fire({
+            title: 'Success!',
+            text: 'Your photo has been uploaded successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+
+        } catch (error) {
+          uploadStatus.innerHTML = "Upload failed.";
+          Swal.fire({
+            title: 'Error!',
+            text: 'There was an error uploading your photo. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      } else {
+        Swal.fire({
+          title: 'Warning!',
+          text: 'Please select a photo to upload.',
+          icon: 'warning',
+          confirmButtonText: 'OK'
         });
-        console.log("Document saved in Firestore:", docRef.id);
-
-        // Success Message
-        Swal.fire("Success", "Photo uploaded and saved to Firestore successfully", "success");
-
-        // Show the image URL in the status section
-        statusDiv.innerHTML = `Uploaded Successfully: <a href="${downloadURL}" target="_blank" class="text-yellow-400">${downloadURL}</a>`;
-      } catch (error) {
-        console.error("Upload failed:", error);
-        Swal.fire("Error", "Failed to upload photo. " + error.message, "error");
       }
     });
   </script>
 
 </body>
-
 </html>
