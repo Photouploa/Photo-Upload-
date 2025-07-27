@@ -176,7 +176,7 @@
     // Delete link from Firestore
     async function deleteLink(linkId) {
       try {
-        const linkRef = doc(db, "Linkdb", linkId);
+        const linkRef = doc(db, "Linkdb", linkId);  // Ensure this is the correct doc reference
         await deleteDoc(linkRef);
         loadLinks();  // Reload the links after deletion
         alert("Link deleted successfully!");
