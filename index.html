@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <title>ছবি আপলোড</title>
+  <meta charset="UTF-8" />
+  <title>ছবি আপলোড ও প্রিভিউ</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 </head>
-<body class="bg-gray-100 py-10 px-4">
+<body class="bg-gray-100 py-10 px-4 flex flex-col items-center min-h-screen">
 
-  <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
-    <h1 class="text-2xl font-bold text-center text-gray-700 mb-6">ছবি আপলোড ও প্রদর্শন</h1>
+  <h1 class="text-3xl font-bold mb-6 text-gray-700">ছবি আপলোড ও প্রিভিউ</h1>
 
-    <!-- এখানে iframe JS দিয়ে যোগ হবে -->
-    <div id="iframe-container" class="w-full h-[600px] border border-gray-300 rounded overflow-hidden">
-      <!-- JS দিয়ে এখানে iframe আসবে -->
-    </div>
+  <input
+    type="file"
+    id="imageInput"
+    accept="image/*"
+    class="mb-6"
+  />
 
-    <p class="mt-6 text-center text-gray-600">
-      উপরের ফ্রেমে <strong>postimages.org</strong> ওয়েবসাইটটি JavaScript এর মাধ্যমে লোড হয়েছে।
-    </p>
+  <div id="preview" class="w-80 h-80 bg-white rounded shadow flex items-center justify-center border border-gray-300 overflow-hidden">
+    <p class="text-gray-400">আপনার ছবি এখানে দেখা যাবে</p>
   </div>
 
   <script>
-    // JavaScript দিয়ে iframe তৈরি ও যোগ করা
-    const iframe = document.createElement('iframe');
-    iframe.src = 'https://postimages.org/';
-    iframe.width = '100%';
-    iframe.height = '100%';
-    iframe.style.border = 'none';
-    iframe.allowFullscreen = true;
-    iframe.loading = 'lazy';
+    const input = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
 
-    // div তে iframe যোগ করা
-    document.getElementById('iframe-container').appendChild(iframe);
+    input.addEventListener('change', () => {
+      const file = input.files[0];
+      if (!file) {
+        preview.innerHTML = '<p class="text-gray-400">আপনার ছবি এখানে দেখা যাবে</p>';
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        preview.innerHTML = '<p class="text-red-500">দয়া করে একটি ছবি নির্বাচন করুন</p>';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image" class="max-w-full max-h-full object-contain" />`;
+      };
+      reader.readAsDataURL(file);
+    });
   </script>
 
 </body>
