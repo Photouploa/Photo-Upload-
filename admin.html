@@ -15,7 +15,7 @@
   <div class="flex-grow w-full lg:ml-64 min-h-screen flex flex-col">
     <header class="bg-blue-700 text-white p-4 flex justify-between items-center shadow-md sticky top-0 z-30">
       <div class="flex items-center space-x-4">
-        <button id="openSidebar" class="lg:hidden text-2xl">
+        <button id="logoutBtn" class="lg:hidden text-2xl">
           <i class="fas fa-bars"></i>
         </button>
         <h1 class="text-xl font-bold">Admin Panel</h1>
@@ -51,14 +51,15 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-      authDomain: "dls12364.firebaseapp.com",
-      projectId: "dls12364",
-      storageBucket: "dls12364.firebasestorage.app",
-      messagingSenderId: "431397971734",
-      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-      measurementId: "G-B75EB4GGRV"
-    };
+    const firebaseConfig = {
+  apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
+  authDomain: "dlstournament-31ac1.firebaseapp.com",
+  projectId: "dlstournament-31ac1",
+  storageBucket: "dlstournament-31ac1.firebasestorage.app",
+  messagingSenderId: "874377019055",
+  appId: "1:874377019055:web:6e38db2ec7f0d541d2de5a",
+  measurementId: "G-0DGFJEV6GL"
+};
 
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
