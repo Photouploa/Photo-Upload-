@@ -28,8 +28,24 @@
         <div class="text-xl font-semibold text-blue-700 mb-2" id="totalUsersCount">Total Users: ...</div>
       </div>
 
-      <!-- Users Table Section removed as per request -->
-      <!-- All User-related functionality has been removed. -->
+      <!-- Link Submission Section -->
+      <div class="bg-white shadow rounded p-4">
+        <h2 class="text-xl font-semibold text-blue-700 mb-4">Submit a Link</h2>
+        <form id="linkForm" class="space-y-4">
+          <input 
+            type="url" 
+            id="linkInput" 
+            class="w-full p-2 border border-gray-300 rounded-md" 
+            placeholder="Enter link here"
+            required />
+          <button 
+            type="submit" 
+            class="w-full p-2 bg-blue-700 text-white rounded-md hover:bg-blue-800">
+            Submit Link
+          </button>
+        </form>
+      </div>
+
     </main>
   </div>
 
@@ -47,18 +63,18 @@
       collection,
       getDocs,
       doc,
-      updateDoc
+      setDoc
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
-  authDomain: "dlstournament-31ac1.firebaseapp.com",
-  projectId: "dlstournament-31ac1",
-  storageBucket: "dlstournament-31ac1.firebasestorage.app",
-  messagingSenderId: "874377019055",
-  appId: "1:874377019055:web:6e38db2ec7f0d541d2de5a",
-  measurementId: "G-0DGFJEV6GL"
-};
+      apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
+      authDomain: "dlstournament-31ac1.firebaseapp.com",
+      projectId: "dlstournament-31ac1",
+      storageBucket: "dlstournament-31ac1.firebasestorage.app",
+      messagingSenderId: "874377019055",
+      appId: "1:874377019055:web:6e38db2ec7f0d541d2de5a",
+      measurementId: "G-0DGFJEV6GL"
+    };
 
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
@@ -90,6 +106,30 @@
         console.error("Error loading user count:", err);
       }
     }
+
+    // Link submission functionality
+    const linkForm = document.getElementById("linkForm");
+
+    linkForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const linkInput = document.getElementById("linkInput");
+      const link = linkInput.value.trim();
+
+      if (link) {
+        try {
+          const linkRef = doc(collection(db, "Linkdb"));
+          await setDoc(linkRef, { link: link, timestamp: new Date() });
+          alert("Link submitted successfully!");
+          linkInput.value = "";  // Clear input field
+        } catch (err) {
+          console.error("Error submitting link:", err);
+          alert("Failed to submit the link. Please try again.");
+        }
+      } else {
+        alert("Please enter a valid link.");
+      }
+    });
   </script>
 </body>
 </html>
