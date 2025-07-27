@@ -19,14 +19,26 @@
     const imageInput = document.getElementById('imageInput');
     const preview = document.getElementById('preview');
 
+    // Function to generate a fake UUID
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
     imageInput.addEventListener('change', function () {
       const file = this.files[0];
       if (file) {
         const imageUrl = URL.createObjectURL(file);
+        const fakeUUID = generateUUID();
+        const link = `https://photoupload1.netlify.app/${fakeUUID}`;
+        
         preview.innerHTML = `
           <img src="${imageUrl}" alt="Uploaded Image" class="w-full h-auto rounded mb-2 border border-gray-300">
           <strong class="block text-gray-700">ছবির লিঙ্ক:</strong>
-          <a href="${imageUrl}" target="_blank" class="text-blue-600 underline break-all">${imageUrl}</a>
+          <a href="${link}" target="_blank" class="text-blue-600 underline break-all">${link}</a>
         `;
       } else {
         preview.innerHTML = '';
