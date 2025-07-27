@@ -1,64 +1,37 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <title>ছবি আপলোড এবং লিঙ্ক তৈরি</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            background-color: #f0f0f0;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 500px;
-            margin: auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        input[type="file"] {
-            margin-bottom: 20px;
-        }
-        .preview {
-            margin-top: 20px;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 10px;
-        }
-        a {
-            display: block;
-            word-break: break-all;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>ছবি আপলোড এবং লিঙ্ক তৈরি</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 </head>
-<body>
-    <div class="container">
-        <h2>ছবি আপলোড করুন</h2>
-        <input type="file" id="imageInput" accept="image/*">
-        <div class="preview" id="preview"></div>
-    </div>
+<body class="bg-gray-100 py-10 px-4">
+  <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">ছবি আপলোড করুন</h2>
+    
+    <input type="file" id="imageInput" accept="image/*" class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 mb-4" />
+    
+    <div class="preview mt-4" id="preview"></div>
+  </div>
 
-    <script>
-        const imageInput = document.getElementById('imageInput');
-        const preview = document.getElementById('preview');
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
 
-        imageInput.addEventListener('change', function () {
-            const file = this.files[0];
-
-            if (file) {
-                const imageUrl = URL.createObjectURL(file);
-                preview.innerHTML = `
-                    <img src="${imageUrl}" alt="Uploaded Image">
-                    <strong>ছবির লিঙ্ক:</strong>
-                    <a href="${imageUrl}" target="_blank">${imageUrl}</a>
-                `;
-            } else {
-                preview.innerHTML = '';
-            }
-        });
-    </script>
+    imageInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        const imageUrl = URL.createObjectURL(file);
+        preview.innerHTML = `
+          <img src="${imageUrl}" alt="Uploaded Image" class="w-full h-auto rounded mb-2 border border-gray-300">
+          <strong class="block text-gray-700">ছবির লিঙ্ক:</strong>
+          <a href="${imageUrl}" target="_blank" class="text-blue-600 underline break-all">${imageUrl}</a>
+        `;
+      } else {
+        preview.innerHTML = '';
+      }
+    });
+  </script>
 </body>
 </html>
