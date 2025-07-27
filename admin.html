@@ -46,6 +46,14 @@
         </form>
       </div>
 
+      <!-- Links Display Section -->
+      <div class="bg-white shadow rounded p-4">
+        <h2 class="text-xl font-semibold text-blue-700 mb-4">Submitted Links</h2>
+        <div id="linksContainer" class="space-y-4">
+          <!-- Links will be dynamically loaded here -->
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -93,6 +101,7 @@
         window.location.href = "login.html";
       } else {
         loadTotalUsersCount();
+        loadLinks();
       }
     });
 
@@ -122,6 +131,7 @@
           await setDoc(linkRef, { link: link, timestamp: new Date() });
           alert("Link submitted successfully!");
           linkInput.value = "";  // Clear input field
+          loadLinks();  // Reload the links after submission
         } catch (err) {
           console.error("Error submitting link:", err);
           alert("Failed to submit the link. Please try again.");
@@ -130,6 +140,32 @@
         alert("Please enter a valid link.");
       }
     });
+
+    // Load links from Firestore and display them
+    async function loadLinks() {
+      try {
+        const linksCol = collection(db, "Linkdb");
+        const linksSnapshot = await getDocs(linksCol);
+        const linksContainer = document.getElementById("linksContainer");
+
+        linksContainer.innerHTML = "";  // Clear existing links
+
+        linksSnapshot.forEach((doc) => {
+          const linkData = doc.data();
+          const linkElement = document.createElement("div");
+          linkElement.classList.add("p-4", "border", "border-gray-300", "rounded-md");
+          linkElement.innerHTML = `
+            <a href="${linkData.link}" target="_blank" class="text-blue-700 hover:text-blue-900">
+              ${linkData.link}
+            </a>
+            <p class="text-sm text-gray-500 mt-2">Submitted on: ${linkData.timestamp.toDate().toLocaleString()}</p>
+          `;
+          linksContainer.appendChild(linkElement);
+        });
+      } catch (err) {
+        console.error("Error loading links:", err);
+      }
+    }
   </script>
 </body>
 </html>
