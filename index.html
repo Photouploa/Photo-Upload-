@@ -1,85 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bangla Top</title>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
-
-  <!-- SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta charset="UTF-8">
+    <title>ছবি আপলোড এবং লিঙ্ক তৈরি</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        .preview {
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        a {
+            display: block;
+            word-break: break-all;
+        }
+    </style>
 </head>
-
-<body class="bg-black">
-
-  <!-- Header -->
-  <header class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
-    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">BanglaTop</h2>
-  </header>
-
-  <!-- Main Content -->
-  <main class="p-4 max-w-3xl mx-auto mt-16">
-
-    <!-- Photo Upload Section -->
-    <div class="flex flex-col items-center mt-10">
-      <input type="file" id="fileInput" class="bg-gray-800 text-white p-2 rounded mt-5" />
-      <button id="uploadBtn" class="bg-yellow-400 text-black px-4 py-2 rounded mt-3" onclick="uploadPhoto()">Upload Photo</button>
+<body>
+    <div class="container">
+        <h2>ছবি আপলোড করুন</h2>
+        <input type="file" id="imageInput" accept="image/*">
+        <div class="preview" id="preview"></div>
     </div>
 
-    <div id="uploadedLink" class="text-center text-white mt-5"></div>
-  </main>
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const preview = document.getElementById('preview');
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+        imageInput.addEventListener('change', function () {
+            const file = this.files[0];
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
-      authDomain: "dlstournament-31ac1.firebaseapp.com",
-      projectId: "dlstournament-31ac1",
-      storageBucket: "dlstournament-31ac1.appspot.com",
-      messagingSenderId: "874377019055",
-      appId: "1:874377019055:web:6e38db2ec7f0d541d2de5a",
-      measurementId: "G-0DGFJEV6GL"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-
-    // Function to upload photo to Firebase Storage
-    function uploadPhoto() {
-      const fileInput = document.getElementById("fileInput");
-      const file = fileInput.files[0];
-
-      if (file) {
-        const storageRef = ref(storage, 'images/' + file.name);
-        uploadBytes(storageRef, file).then((snapshot) => {
-          console.log('Uploaded a file!');
-          getDownloadURL(snapshot.ref).then((downloadURL) => {
-            // Display the uploaded photo's URL
-            document.getElementById('uploadedLink').innerHTML = `Photo uploaded successfully! <a href="${downloadURL}" target="_blank" class="text-yellow-400">${downloadURL}</a>`;
-          });
-        }).catch((error) => {
-          console.error("Error uploading photo: ", error);
-          Swal.fire('Error!', 'Failed to upload photo. Please try again.', 'error');
+            if (file) {
+                const imageUrl = URL.createObjectURL(file);
+                preview.innerHTML = `
+                    <img src="${imageUrl}" alt="Uploaded Image">
+                    <strong>ছবির লিঙ্ক:</strong>
+                    <a href="${imageUrl}" target="_blank">${imageUrl}</a>
+                `;
+            } else {
+                preview.innerHTML = '';
+            }
         });
-      } else {
-        Swal.fire('Error!', 'No file selected. Please choose a file.', 'error');
-      }
-    }
-
-  </script>
-
+    </script>
 </body>
-
 </html>
