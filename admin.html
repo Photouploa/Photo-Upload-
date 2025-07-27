@@ -71,8 +71,7 @@
       collection,
       getDocs,
       doc,
-      setDoc,
-      deleteDoc,
+      setDoc
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -160,25 +159,11 @@
               ${linkData.link}
             </a>
             <p class="text-sm text-gray-500 mt-2">Submitted on: ${linkData.timestamp.toDate().toLocaleString()}</p>
-            <button onclick="deleteLink('${doc.id}')" class="mt-2 p-2 bg-red-500 text-white rounded-md hover:bg-red-600">Delete</button>
           `;
           linksContainer.appendChild(linkElement);
         });
       } catch (err) {
         console.error("Error loading links:", err);
-      }
-    }
-
-    // Delete link from Firestore
-    async function deleteLink(linkId) {
-      try {
-        const linkRef = doc(db, "Linkdb", linkId);
-        await deleteDoc(linkRef);
-        alert("Link deleted successfully!");
-        loadLinks();  // Reload the links after deletion
-      } catch (err) {
-        console.error("Error deleting link:", err);
-        alert("Failed to delete the link. Please try again.");
       }
     }
   </script>
