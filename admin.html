@@ -5,15 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Panel</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col lg:flex-row">
+<body class="bg-gray-100">
 
   <!-- Main Content -->
   <div class="flex-grow w-full lg:ml-64 min-h-screen flex flex-col">
     <header class="bg-blue-700 text-white p-4 flex justify-between items-center shadow-md sticky top-0 z-30">
-      <h1 class="text-xl font-bold">Admin Panel</h1>
+      <div class="flex items-center space-x-4">
+        <button id="logoutBtn" class="lg:hidden text-2xl">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="text-xl font-bold">Admin Panel</h1>
+      </div>
     </header>
 
     <main class="p-4 md:p-6 space-y-6 overflow-auto flex-grow">
@@ -22,28 +28,39 @@
         <div class="text-xl font-semibold text-blue-700 mb-2" id="totalUsersCount">Total Users: ...</div>
       </div>
 
-      <!-- Users Table Section -->
+      <!-- Link Submission Section -->
       <div class="bg-white shadow rounded p-4">
-        <div class="overflow-x-auto max-h-[600px]">
-          <table class="w-full text-sm border border-gray-300 rounded overflow-hidden min-w-[600px]">
-            <thead class="bg-gray-100 sticky top-0 z-10">
-              <tr>
-                <th class="p-3 border border-gray-300 text-left">Email</th>
-                <th class="p-3 border border-gray-300 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="usersTableBody">
-              <tr><td colspan="2" class="p-4 text-center text-gray-500">Loading users...</td></tr>
-            </tbody>
-          </table>
+        <h2 class="text-xl font-semibold text-blue-700 mb-4">Submit a Link</h2>
+        <form id="linkForm" class="space-y-4">
+          <input 
+            type="url" 
+            id="linkInput" 
+            class="w-full p-2 border border-gray-300 rounded-md" 
+            placeholder="Enter link here"
+            required />
+          <button 
+            type="submit" 
+            class="w-full p-2 bg-blue-700 text-white rounded-md hover:bg-blue-800">
+            Submit Link
+          </button>
+        </form>
+      </div>
+
+      <!-- Links Display Section -->
+      <div class="bg-white shadow rounded p-4">
+        <h2 class="text-xl font-semibold text-blue-700 mb-4">Submitted Links</h2>
+        <div id="linksContainer" class="space-y-4">
+          <!-- Links will be dynamically loaded here -->
         </div>
       </div>
+
     </main>
   </div>
 
   <!-- Firebase and Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
     import {
       getAuth,
       onAuthStateChanged,
@@ -52,7 +69,9 @@
     import {
       getFirestore,
       collection,
-      getDocs
+      getDocs,
+      doc,
+      setDoc
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -66,12 +85,11 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const usersTableBody = document.getElementById("usersTableBody");
     const logoutBtn = document.getElementById("logoutBtn");
-    const totalUsersCountElem = document.getElementById("totalUsersCount");
 
     logoutBtn.addEventListener("click", async () => {
       await signOut(auth);
@@ -83,7 +101,7 @@
         window.location.href = "login.html";
       } else {
         loadTotalUsersCount();
-        loadUsers();
+        loadLinks();
       }
     });
 
@@ -91,43 +109,61 @@
       try {
         const usersCol = collection(db, "users");
         const usersSnapshot = await getDocs(usersCol);
+        const totalUsersCountElem = document.getElementById("totalUsersCount");
         totalUsersCountElem.textContent = `Total Users: ${usersSnapshot.size}`;
       } catch (err) {
-        totalUsersCountElem.textContent = "Total Users: Error";
         console.error("Error loading user count:", err);
       }
     }
 
-    async function loadUsers() {
-      try {
-        const usersCol = collection(db, "users");
-        const usersSnapshot = await getDocs(usersCol);
+    // Link submission functionality
+    const linkForm = document.getElementById("linkForm");
 
-        if (usersSnapshot.empty) {
-          usersTableBody.innerHTML = `<tr><td colspan="2" class="p-4 text-center">No users found.</td></tr>`;
-          return;
+    linkForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const linkInput = document.getElementById("linkInput");
+      const link = linkInput.value.trim();
+
+      if (link) {
+        try {
+          const linkRef = doc(collection(db, "Linkdb"));
+          await setDoc(linkRef, { link: link, timestamp: new Date() });
+          alert("Link submitted successfully!");
+          linkInput.value = "";  // Clear input field
+          loadLinks();  // Reload the links after submission
+        } catch (err) {
+          console.error("Error submitting link:", err);
+          alert("Failed to submit the link. Please try again.");
         }
+      } else {
+        alert("Please enter a valid link.");
+      }
+    });
 
-        let rowsHtml = "";
-        usersSnapshot.forEach((docSnap) => {
-          const user = docSnap.data();
-          rowsHtml += `
-            <tr class="hover:bg-gray-50 border-t">
-              <td class="p-3 border border-gray-300 break-words max-w-xs">${user.email || "N/A"}</td>
-              <td class="p-3 border border-gray-300 text-center">
-                <button class="view-details-btn bg-blue-500 hover:bg-green-600 text-white px-4 py-1 rounded transition" data-uid="${docSnap.id}">
-                  View Details
-                </button>
-              </td>
-            </tr>
+    // Load links from Firestore and display them
+    async function loadLinks() {
+      try {
+        const linksCol = collection(db, "Linkdb");
+        const linksSnapshot = await getDocs(linksCol);
+        const linksContainer = document.getElementById("linksContainer");
+
+        linksContainer.innerHTML = "";  // Clear existing links
+
+        linksSnapshot.forEach((doc) => {
+          const linkData = doc.data();
+          const linkElement = document.createElement("div");
+          linkElement.classList.add("p-4", "border", "border-gray-300", "rounded-md");
+          linkElement.innerHTML = `
+            <a href="${linkData.link}" target="_blank" class="text-blue-700 hover:text-blue-900">
+              ${linkData.link}
+            </a>
+            <p class="text-sm text-gray-500 mt-2">Submitted on: ${linkData.timestamp.toDate().toLocaleString()}</p>
           `;
+          linksContainer.appendChild(linkElement);
         });
-
-        usersTableBody.innerHTML = rowsHtml;
-
-      } catch (error) {
-        usersTableBody.innerHTML = `<tr><td colspan="2" class="p-4 text-center text-red-600">Error loading users: ${error.message}</td></tr>`;
-        console.error("Error loading users:", error);
+      } catch (err) {
+        console.error("Error loading links:", err);
       }
     }
   </script>
