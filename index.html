@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Video Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masti Bangla</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
 </head>
-<body class="bg-black text-white">
 
-  <!-- Video Section -->
-  <div class="container mx-auto mt-10">
-    <div class="text-center mb-6">
-      <h1 class="text-4xl font-bold text-white">Video Gallery</h1>
-    </div>
-    <!-- Video Embed -->
-    <div id="videoContainer" class="flex justify-center">
-      <!-- Video will be dynamically inserted here -->
-    </div>
-  </div>
+<body class="bg-gradient-to-r from-blue-900 via-purple-900 to-pink-900 text-white min-h-screen flex flex-col">
 
-  <!-- Firebase Script -->
+  <header class="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-2 shadow-md">
+    <h1 class="text-2xl font-bold text-white text-center" style="font-family: 'Audiowide', cursive;">Masti Bangla</h1>
+  </header>
+
+  <main class="p-4 flex-grow">
+    <div class="text-2xl text-white font-semibold mb-4 text-center">Published Videos: 
+      <span id="total-video" class="text-green-400 font-bold"></span>
+    </div>
+    <div id="videoGallery" class="grid grid-cols-1 gap-6">
+      <!-- Video Gallery Loaded from JavaScript -->
+    </div>
+
+    <div id="pagination" class="flex justify-center mt-4">
+      <!-- Pagination Buttons will be inserted here -->
+    </div>
+  </main>
+
+  <footer class="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-4 text-center text-gray-200">
+    <p>&copy; 2025 Masti Bangla. All rights reserved.</p>
+  </footer>
+
+  <script type='text/javascript' src='//pl22142576.profitableratecpm.com/46/59/4c/46594c43bfb3048f34c90a492ed6b1bb.js'></script>
+  
   <script type="module">
     import { getAuth, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -41,35 +54,72 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      const videoList = [
+        "https://t.me/shimulbagan/641",
+        "https://t.me/mastiXbangla/23",
+        "https://t.me/xlsijan/216",
+        "https://t.me/enjoyXzone/2",
+        "https://t.me/xlsijan/1920"
+      ];
+
+      const videoContainer = document.getElementById("videoGallery");
+      const totalVideoCount = document.getElementById("total-video");
+      const paginationContainer = document.getElementById("pagination");
+      let currentPage = 1;
+      const videosPerPage = 5;
+
+      function renderVideos() {
+        videoContainer.innerHTML = "";
+        const startIndex = (currentPage - 1) * videosPerPage;
+        const endIndex = startIndex + videosPerPage;
+        const currentVideos = videoList.slice(startIndex, endIndex);
+
+        currentVideos.forEach((video) => {
+          videoContainer.innerHTML += `
+            <div style="height: 538px;" class="iframe bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg overflow-hidden shadow-lg relative">
+              <div class="title p-2 text-1xl font-bold text-green-700 bg-white absolute top-0 left-0 right-0 mx-auto flex items-center justify-between">
+              <div>
+                  Masti Bangla 💋 🥵
+                <p style="font-size: 10px;" class="text-blue-700">Enjoy Your Life 18+</p>
+              </div>
+              <div>
+              </div>
+                <a href="https://t.me/mastiXbangla"><i class="fa-brands fa-telegram text-blue-700 text-3xl"></i></a>
+              </div>
+              <iframe src="${video.replace('/t.me/', '/telegram.me/') + '?embed=1'}" class="w-full h-screen" allowfullscreen></iframe>
+            </div>`;
+        });
+
+        totalVideoCount.textContent = videoList.length;
+        updatePaginationButtons();
+      }
+
+      function updatePaginationButtons() {
+        const totalPages = Math.ceil(videoList.length / videosPerPage);
+        paginationContainer.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+          const pageButton = document.createElement("button");
+          pageButton.textContent = i;
+          pageButton.classList.add("bg-purple-600", "text-white", "py-2", "px-4", "rounded-md", "mx-1");
+
+          if (i === currentPage) {
+            pageButton.classList.add("bg-green-500"); // Highlight the current page
+          }
+
+          pageButton.addEventListener("click", () => {
+            currentPage = i;
+            renderVideos();
+          });
+
+          paginationContainer.appendChild(pageButton);
+        }
+      }
+
+      renderVideos();
+    });
   </script>
-
-  <!-- JavaScript for Video Embedding -->
-  <script>
-    // Function to extract and show video from the provided Telegram link
-    function showTelegramVideo() {
-      const telegramVideoLink = "https://t.me/shimulbagan/641"; // Example Telegram video link
-
-      // Construct the video URL (adjust this if you have a direct URL to the video)
-      const videoUrl = telegramVideoLink;
-
-      // Creating an iframe to embed the video
-      const iframe = document.createElement("iframe");
-      iframe.setAttribute("src", videoUrl);
-      iframe.setAttribute("width", "560");
-      iframe.setAttribute("height", "315");
-      iframe.setAttribute("frameborder", "0");
-      iframe.setAttribute("allow", "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture");
-      iframe.setAttribute("allowfullscreen", "");
-
-      // Append iframe to the video container
-      const videoContainer = document.getElementById("videoContainer");
-      videoContainer.innerHTML = ''; // Clear previous content
-      videoContainer.appendChild(iframe);
-    }
-
-    // Call the function to display the video
-    showTelegramVideo();
-  </script>
-
 </body>
 </html>
