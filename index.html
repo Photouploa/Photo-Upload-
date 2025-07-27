@@ -35,40 +35,48 @@
   </footer>
 
   <script type='text/javascript' src='//pl22142576.profitableratecpm.com/46/59/4c/46594c43bfb3048f34c90a492ed6b1bb.js'></script>
-  
+
   <script type="module">
     import { getAuth, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
-  authDomain: "dlstournament-31ac1.firebaseapp.com",
-  projectId: "dlstournament-31ac1",
-  storageBucket: "dlstournament-31ac1.firebasestorage.app",
-  messagingSenderId: "874377019055",
-  appId: "1:874377019055:web:6e38db2ec7f0d541d2de5a",
-  measurementId: "G-0DGFJEV6GL"
-};
+      apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
+      authDomain: "dlstournament-31ac1.firebaseapp.com",
+      projectId: "dlstournament-31ac1",
+      storageBucket: "dlstournament-31ac1.firebasestorage.app",
+      messagingSenderId: "874377019055",
+      appId: "1:874377019055:web:6e38db2ec7f0d541d2de5a",
+      measurementId: "G-0DGFJEV6GL"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    
-    document.addEventListener("DOMContentLoaded", () => {
-      const videoList = [
-        "https://t.me/shimulbagan/641",
-        "https://t.me/mastiXbangla/23",
-        "https://t.me/xlsijan/216",
-        "https://t.me/enjoyXzone/2",
-        "https://t.me/xlsijan/1920"
-      ];
 
+    document.addEventListener("DOMContentLoaded", async () => {
       const videoContainer = document.getElementById("videoGallery");
       const totalVideoCount = document.getElementById("total-video");
       const paginationContainer = document.getElementById("pagination");
       let currentPage = 1;
       const videosPerPage = 5;
+      let videoList = [];
+
+      // Fetch video links from Firestore
+      async function fetchVideoLinks() {
+        try {
+          const linkCol = collection(db, "Linkdb");
+          const linkSnapshot = await getDocs(linkCol);
+          videoList = linkSnapshot.docs.map(doc => doc.data().link); // Store the links
+
+          renderVideos(); // Render videos after fetching
+        } catch (err) {
+          console.error("Error fetching video links:", err);
+        }
+      }
+
+      fetchVideoLinks(); // Call the function to load the video links
 
       function renderVideos() {
         videoContainer.innerHTML = "";
@@ -117,9 +125,8 @@
           paginationContainer.appendChild(pageButton);
         }
       }
-
-      renderVideos();
     });
   </script>
 </body>
+
 </html>
